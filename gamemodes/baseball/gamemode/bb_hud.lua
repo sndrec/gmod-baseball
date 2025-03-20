@@ -72,6 +72,24 @@ surface.CreateFont( "UIScoreFont", {
 	outline = false,
 } )
 
+surface.CreateFont( "UIStaminaFont", {
+	font = "Coolvetica", --  Use the font-name which is shown to you by your operating system Font Viewer, not the file name
+	extended = false,
+	size =48,
+	weight = 500,
+	blursize = 0,
+	scanlines = 0,
+	antialias = true,
+	underline = false,
+	italic = false,
+	strikeout = false,
+	symbol = false,
+	rotary = false,
+	shadow = false,
+	additive = false,
+	outline = false,
+} )
+
 --local ui_scale = 3;
 
 local xoffset = 30;
@@ -492,10 +510,10 @@ function HUD()
 	
 	--score icons (replace with graphix!!!)
 	surface.SetDrawColor( 255, 255, 255, 255 )
-	--surface.SetMaterial(teamMat1)
-	--surface.DrawTexturedRect(395, ScrH() - 75, 55, 55)
-	--surface.SetMaterial(teamMat2)
-	--surface.DrawTexturedRect(395, ScrH() - 140, 55, 55)
+	surface.SetMaterial(teamMat1)
+	surface.DrawTexturedRect(37, ScrH() - 77, 54, 54)
+	surface.SetMaterial(teamMat2)
+	surface.DrawTexturedRect(37, ScrH() - 148, 54, 54)
 	--score itsel;f
 	-- score_red
 	-- score_blue

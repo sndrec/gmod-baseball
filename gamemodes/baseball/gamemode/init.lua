@@ -37,6 +37,17 @@ resource.AddFile( "materials/constructcomets.png" )
 resource.AddFile( "materials/flatgrassfriends.png" )
 resource.AddFile( "materials/staminaempty.png" )
 resource.AddFile( "materials/staminafull.png" )
+
+resource.AddFile( "materials/baseball/statui_empty.png" )
+resource.AddFile( "materials/baseball/statui_full.png" )
+resource.AddFile( "materials/baseball/statui_points.png" )
+resource.AddFile( "materials/baseball/statui_arms.png" )
+resource.AddFile( "materials/baseball/statui_legs.png" )
+resource.AddFile( "materials/baseball/statui_body.png" )
+resource.AddFile( "materials/baseball/statui_spirit.png" )
+resource.AddFile( "materials/baseball/statui_stamina.png" )
+resource.AddFile( "materials/baseball/statui_unspent.png" )
+
 --resource.AddWorkshop( "882463775" )
 --resource.AddFile( "materials/indicator.png" )
 

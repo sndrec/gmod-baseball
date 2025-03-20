@@ -50,13 +50,27 @@ net.Receive("ShowStatMenu", function()
 	local StatMenu = vgui.Create("DFrame")
 	local CreateTime = CurTime()
 	local PosX = ScrW() * -0.25
-	local Height = ScrH() * 0.6
-	local BaseballMat = Material( "baseball.png", "noclamp smooth" )
-	StatMenu:SetPos(PosX, ScrH() * 0.2)
-	StatMenu:SetSize(ScrW() * 0.25, Height)
+	local Width = 480
+	local Height = 720
+	local PosY = ScrH() - Height - 220
+	
+	--local BaseballMat = Material( "baseball.png", "noclamp smooth" )
+	local PointEmpty = Material ( "baseball/statui_empty.png", "noclamp smooth" )
+	local PointFull = Material ( "baseball/statui_full.png", "noclamp smooth" )
+	local BackPoints = Material ( "baseball/statui_points.png", "noclamp smooth" )
+	local BackArms = Material ( "baseball/statui_arms.png", "noclamp smooth" )
+	local BackLegs = Material ( "baseball/statui_legs.png", "noclamp smooth" )
+	local BackBody = Material ( "baseball/statui_body.png", "noclamp smooth" )
+	local BackSpirit = Material ( "baseball/statui_spirit.png", "noclamp smooth" )
+	local BackStamina = Material ( "baseball/statui_stamina.png", "noclamp smooth" )
+	local Unspent = Material ( "baseball/statui_unspent.png", "noclamp smooth" )
+	
+	StatMenu:SetPos(PosX, PosY)
+	StatMenu:SetSize(Width, Height)
 	StatMenu:SetVisible(true)
 	StatMenu:SetDraggable(false)
 	StatMenu:ShowCloseButton(true)
+	StatMenu:SetTitle("")
 	StatMenu:MakePopup()
 
 	ArmData = {}
@@ -75,8 +89,8 @@ net.Receive("ShowStatMenu", function()
 	local NumStatsMax = 8
 
 	function StatMenu:Think()
-		PosX = Lerp(RealFrameTime() * 12, PosX, 0)
-		StatMenu:SetPos(PosX, ScrH() * 0.2)
+		PosX = Lerp(RealFrameTime() * 12, PosX, 10)
+		StatMenu:SetPos(PosX, PosY)
 		ArmData.Points = LocalPlayer():GetArmsStat()
 		LegData.Points = LocalPlayer():GetLegsStat()
 		BodyData.Points = LocalPlayer():GetBodyStat()
@@ -85,34 +99,89 @@ net.Receive("ShowStatMenu", function()
 
 	function StatMenu:Paint( w, h )
 		draw.RoundedBox( 4, 0, 0, w, h, Color( 255, 255, 255, 80 ) )
-		draw.SimpleTextOutlined( "Stat Points Remaining:", "DermaDefault", 6, (Height * 0.11) - 20, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0, 255 ) )
-		surface.SetMaterial(BaseballMat)
 		surface.SetDrawColor( 255, 255, 255, 255 )
+		surface.SetMaterial(BackPoints)
+		surface.DrawTexturedRect( 0, 0, 480, 120 )
+		surface.SetMaterial(BackArms)
+		surface.DrawTexturedRect( 0, 120, 480, 120 )
+		surface.SetMaterial(BackLegs)
+		surface.DrawTexturedRect( 0, 240, 480, 120 )
+		surface.SetMaterial(BackBody)
+		surface.DrawTexturedRect( 0, 360, 480, 120 )
+		surface.SetMaterial(BackSpirit)
+		surface.DrawTexturedRect( 0, 480, 480, 120 )
+		surface.SetMaterial(BackStamina)
+		surface.DrawTexturedRect( 0, 600, 480, 120 )
+		--draw.SimpleTextOutlined( "Stat Points Remaining:", "DermaDefault", 6, (Height * 0.11) - 20, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0, 255 ) )
+		
+		local points = LocalPlayer():GetStatPoints()
+		points = points + ArmData.Points
+		points = points + LegData.Points
+		points = points + BodyData.Points
+		points = points + HeartData.Points
+		
+		surface.SetMaterial(PointEmpty)
+		for i = 1, points, 1 do
+			surface.DrawTexturedRect(Width-(i*37), 5, 32, 32 )
+		end
+		surface.SetMaterial(PointFull)
 		for i = 1, LocalPlayer():GetStatPoints(), 1 do
-			surface.DrawTexturedRect( ((((i - 1) % 10)) * 30) + 6, Height * 0.11 + (30 * math.floor((i - 1) / 10)), 24, 24 )
+			surface.DrawTexturedRect(Width-1-(i*37), 4, 34, 34 )
 		end
 
 		for i, v in ipairs(DataTable) do
 			for n = 1, NumStatsMax, 1 do
+				local offs = 0
+				local siz = 0
 				if n <= v.Points then
-					surface.SetDrawColor( 255, 255, 255, 255 )
+					--surface.SetDrawColor( 255, 255, 255, 255 )
+					surface.SetMaterial(PointFull)
+					offs = -1
+					siz = 2
 				else
-					surface.SetDrawColor( 0, 0, 0, 60 )
+					--surface.SetDrawColor( 0, 0, 0, 60 )
+					surface.SetMaterial(PointEmpty)
 				end
-				surface.DrawTexturedRect( ((n - 1) * 30) + 6, ((Height * 0.15) * i) + (Height * 0.1), 24, 24 )
-				draw.SimpleTextOutlined( v.PrettyName, "DermaDefault", 6, (((Height * 0.15) * i) + (Height * 0.1)) - 16, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0, 255 ) )
+				surface.DrawTexturedRect( Width-offs-((NumStatsMax+1)*37)+(n*37), (120 * i) + offs + 5, 32+siz, 32+siz )
+				--draw.SimpleTextOutlined( v.PrettyName, "DermaDefault", 6, (((Height * 0.15) * i) + (Height * 0.1)) - 16, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0, 255 ) )
 			end
 		end
-		draw.SimpleTextOutlined("Exhaustion: " .. math.SnapTo( 100 - LocalPlayer():GetMaxStamina(), 0.01) .. "%", "DermaDefault", 6, Height * 0.90, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, 1, Color(0, 0, 0, 255))
-		draw.SimpleTextOutlined("Stamina: " .. math.SnapTo( LocalPlayer():GetStamina() / LocalPlayer():GetMaxStamina() * 100, 0.01) .. "%", "DermaDefault", 6, Height * 0.95, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, 1, Color(0, 0, 0, 255))
+		draw.SimpleText(math.SnapTo( 100 - LocalPlayer():GetMaxStamina(), 0.01) .. "%", "UIStaminaFont", 440, 670, Color(255, 60, 60, 255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+		draw.SimpleText(math.SnapTo( LocalPlayer():GetStamina() / LocalPlayer():GetMaxStamina() * 100, 0.01) .. "%", "UIStaminaFont", 38, 670, Color(100, 255, 60, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+		
+		local stam = LocalPlayer():GetStamina() / LocalPlayer():GetMaxStamina()
+		local fati = (100-LocalPlayer():GetMaxStamina())/100
+		surface.SetDrawColor( 100, 255, 60, 255 )
+		surface.DrawRect(40,674,400*(stam-fati),30)
+		surface.SetDrawColor( 255, 60, 60, 255 )
+		surface.DrawRect(441-(400*fati),674,400*fati,30)
+		surface.SetDrawColor( 255, 255, 255, 255 )
+		draw.TexturedQuad
+		{
+			texture = surface.GetTextureID "vgui/gradient-d",
+			color = Color(0, 0, 0, 200),
+			x = 40,
+			y = 674,
+			w = 400*(stam-fati),
+			h = 30
+		}
+		draw.TexturedQuad
+		{
+			texture = surface.GetTextureID "vgui/gradient-d",
+			color = Color(0, 0, 0, 200),
+			x = 441-(400*fati),
+			y = 674,
+			w = 400*fati,
+			h = 30
+		}
 	end
-
+	
 	local allowRemove = true
 
 	for i, v in ipairs(DataTable) do
 		local AddPoint = vgui.Create("DButton", StatMenu)
-		AddPoint:SetPos(((NumStatsMax + 1) * 30) + 6, ((Height * 0.15) * i) + (Height * 0.1))
-		AddPoint:SetSize(24, 24)
+		AddPoint:SetPos(420, (120 * i)+50)
+		AddPoint:SetSize(48, 48)
 		AddPoint:SetText("+")
 		function AddPoint:DoClick()
 			net.Start("RequestStatChange")
@@ -122,8 +191,8 @@ net.Receive("ShowStatMenu", function()
 		end
 		if allowRemove then
 			local RemovePoint = vgui.Create("DButton", StatMenu)
-			RemovePoint:SetPos((NumStatsMax * 30) + 6, ((Height * 0.15) * i) + (Height * 0.1))
-			RemovePoint:SetSize(24, 24)
+			RemovePoint:SetPos(365, (120 * i)+50)
+			RemovePoint:SetSize(48, 48)
 			RemovePoint:SetText("-")
 			function RemovePoint:DoClick()
 				net.Start("RequestStatChange")
