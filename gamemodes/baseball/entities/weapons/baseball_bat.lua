@@ -1168,6 +1168,7 @@ function SWEP:Tick()
     if IsFirstTimePredicted() then
         if not self.last_seen_frame then
             self.last_seen_frame = FrameNumber()
+            self.latest_frame = FrameNumber()
         end
         if self.latest_frame > self.last_seen_frame then
             self.lastCommand = {}

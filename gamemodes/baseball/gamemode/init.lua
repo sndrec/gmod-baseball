@@ -188,6 +188,11 @@ function GM:InitPostEntity()
 	baseballOrigin:SetModel("models/Gibs/HGIBS.mdl")
 	baseballOrigin:SetPos(Vector(-7000, -7000, 320))
 	baseballOrigin:Spawn()
+	RunConsoleCommand("sv_gravity", "800")
+	RunConsoleCommand("sv_accelerate", "0.00001")
+	RunConsoleCommand("sv_friction", "3")
+	RunConsoleCommand("sv_stopspeed", "40")
+	RunConsoleCommand("sv_airaccelerate", "0")
 end
 
 concommand.Add( "addstatpoint", function(pl, cmd, args)
